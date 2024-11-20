@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.21", features = ["derive"] }
+dirs = "5.0.1"
 mlua = { version = "0.10.1", features = ["lua51", "vendored"] }
