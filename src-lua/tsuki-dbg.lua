@@ -1,5 +1,3 @@
----@meta
-
 local tsuki_dbg = {}
 
 ---@return nil

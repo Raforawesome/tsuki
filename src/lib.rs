@@ -1,4 +1,4 @@
-//! A Lua framework akin to Node.JS, but for Lua.
+//! A Lua framework akin to Node.js, but for Lua.
 
 #![feature(os_string_pathbuf_leak)]
 
