@@ -1,17 +1,17 @@
-//! A Lua framework akin to Node.JS, but for Lua.
+//! A Lua framework akin to Node.js, but for Lua.
 //! Features provided are:
 //! - [ ] fs
 //! - [ ] http
 //! - [ ] os
 //! - [ ] window
 
-mod api;
-
-use api::tsuki_dbg::tsuki_dbg_module;
 use clap::Parser;
 use mlua::prelude::*;
 use std::path::PathBuf;
-use tsuki::Args;
+use tsuki::{
+    api::{fs::fs_module, tsuki_dbg::tsuki_dbg_module},
+    Args,
+};
 
 fn main() -> LuaResult<()> {
     tsuki::module_setup::populate_modules()?;
@@ -28,7 +28,9 @@ fn main() -> LuaResult<()> {
     let lua_file: String = std::fs::read_to_string(&parsed_path).expect("Failed to read Lua file!");
 
     let lua = Lua::new();
-    lua.globals().set("tsuki_dbg", tsuki_dbg_module(&lua)?)?;
+    lua.globals()
+        .set("TSUKI_DBG_INTERNAL", tsuki_dbg_module(&lua)?)?;
+    lua.globals().set("FS_INTERNAL", fs_module(&lua)?)?;
     lua.load(&lua_file).exec()?;
 
     Ok(())
