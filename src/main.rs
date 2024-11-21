@@ -14,6 +14,8 @@ use std::path::PathBuf;
 use tsuki::Args;
 
 fn main() -> LuaResult<()> {
+    tsuki::module_setup::populate_modules()?;
+
     let args: Args = Args::parse();
 
     let mut parsed_path: PathBuf = PathBuf::from(args.file);

@@ -1,5 +1,10 @@
 //! A Lua framework akin to Node.JS, but for Lua.
 
+#![feature(os_string_pathbuf_leak)]
+
+pub mod api;
+pub mod module_setup;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
