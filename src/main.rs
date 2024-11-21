@@ -27,6 +27,11 @@ fn main() -> LuaResult<()> {
 
     let lua_file: String = std::fs::read_to_string(&parsed_path).expect("Failed to read Lua file!");
 
+    std::env::set_var(
+        "LUA_PATH",
+        format!("{}/?.lua;;", tsuki::module_setup::get_module_dir().to_str().unwrap()),
+    );
+
     let lua = Lua::new();
     lua.globals()
         .set("TSUKI_DBG_INTERNAL", tsuki_dbg_module(&lua)?)?;
