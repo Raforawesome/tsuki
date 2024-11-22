@@ -4,7 +4,10 @@
 /// Directly embed all source files into binary because
 /// text is small and I'm lazy
 pub const TSUKI_DBG_BINDINGS: &str = include_str!("../src-lua/tsuki-dbg.lua");
-pub const FS_BINDINGS: &str = include_str!("../src-lua/fs.lua");
+#[cfg(unix)]
+pub const FS_BINDINGS: &str = include_str!("../src-lua/fs-unix.lua");
+#[cfg(windows)]
+pub const FS_BINDINGS: &str = include_str!("../src-lua/fs-windows.lua");
 
 use std::{
     cell::LazyCell,

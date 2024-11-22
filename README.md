@@ -10,8 +10,9 @@ similarly to what Node.js enables for JavaScript.
 Lua, while great, was [never designed to be a "do-it-all" language](https://www.lua.org/pil/p1.html).
 The libraries cover only the concepts covered by standard C, and so
 the available standard libraries are missing a lot of filesystem
-and I/O concepts commonly found in other languages. Tsuki aims to
-leverage Lua's extremely powerful extensibility to provide a more ergonomic
+(in fact, the same concept of a filesystem doesn't exist) and I/O
+concepts commonly found in other languages. Tsuki aims to leverage
+Lua's extremely powerful extensibility to provide a more ergonomic
 experience for these use cases.
 
 ---

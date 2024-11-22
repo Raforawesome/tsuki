@@ -29,7 +29,10 @@ fn main() -> LuaResult<()> {
 
     std::env::set_var(
         "LUA_PATH",
-        format!("{}/?.lua;;", tsuki::module_setup::get_module_dir().to_str().unwrap()),
+        format!(
+            "{}/?.lua;;",
+            tsuki::module_setup::get_module_dir().to_str().unwrap()
+        ),
     );
 
     let lua = Lua::new();
