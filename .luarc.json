@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "workspace.library": ["~/.tsuki/modules/"],
+  "diagnostics.disable": [
+    "duplicate-doc-field",
+    "duplicate-doc-param",
+    "duplicate-doc-alias",
+    "duplicate-set-field"
+  ],
+  "runtime.version": "LuaJIT",
+  "hint.enable": false
+}
