@@ -7,6 +7,7 @@ use mlua::prelude::*;
 pub fn fs_module(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("raw_path_exists", lua.create_function(raw_path_exists)?)?;
+    exports.set("split_path", lua.create_function(split_path)?)?;
     Ok(exports)
 }
 
@@ -16,7 +17,6 @@ pub fn raw_path_exists(_: &Lua, path: String) -> LuaResult<bool> {
 }
 
 pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
-    let mut chars = path.chars().peekable();
     let mut buffer: Vec<String> = vec![];
     let mut buf_cur: String = String::new();
     let mut normalized_path: String;
@@ -53,7 +53,7 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
 
     // Separate normalized path
     let mut prev: char = 0x0 as char;
-    for c in chars {
+    for c in path.chars().skip(1) {
         if c == '/' && prev != '\\' {
             buffer.push(buf_cur);
             buf_cur = String::new();
