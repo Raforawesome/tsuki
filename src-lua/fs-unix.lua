@@ -7,7 +7,6 @@ fs.File = {}
 
 ---@class Path
 ---@field private relative boolean
----@field private raw string
 ---@field private stack string[]
 ---# tsuki.fs.Path
 ---A class to represent file paths and allow
@@ -24,7 +23,7 @@ fs.Path = {}
 function fs.Path.new(from)
     local new_path = setmetatable({
         relative = false, -- set class defaults
-        raw = from
+        stack = FS_INTERNAL.split_path(from)
     }, {
         __index = fs.Path,          -- Inherit methods from Path
         __newindex = function() end -- Disable adding new behaviour
@@ -39,7 +38,8 @@ end
 ---print(path:exists())
 ---```
 function fs.Path:exists()
-    return FS_INTERNAL.raw_path_exists(self.raw)
+    -- return FS_INTERNAL.raw_path_exists(self.raw)
+    return FS_INTERNAL.raw_path_exists(table.concat(self.stack, "/"))
 end
 
 return fs
