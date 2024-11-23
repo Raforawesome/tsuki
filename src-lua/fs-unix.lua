@@ -14,11 +14,6 @@ fs.File = {}
 ---ergonomic path traversal.
 fs.Path = {}
 
----@return string[] split_path An array of path segments.
----@param path string The raw path to split up.
-function fs.Path.split_path(path)
-end
-
 ---@return Path new_path The newly created path from given string.
 ---@param from string The string to parse a path from.
 ---```lua

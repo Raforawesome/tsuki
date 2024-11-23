@@ -10,6 +10,58 @@ pub fn fs_module(lua: &Lua) -> LuaResult<LuaTable> {
     Ok(exports)
 }
 
+/// Lua API function to call [PathBuf::exists] on a [String] `path`.
 pub fn raw_path_exists(_: &Lua, path: String) -> LuaResult<bool> {
     Ok(std::path::PathBuf::from(path).exists())
+}
+
+pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
+    let mut chars = path.chars().peekable();
+    let mut buffer: Vec<String> = vec![];
+    let mut buf_cur: String = String::new();
+    let mut normalized_path: String;
+
+    // Path normalization
+    #[allow(clippy::redundant_pattern_matching)]
+    if let Some(_) = path.strip_prefix("/") {
+        // Case: Absolute path provided
+        // current behaviour is to do nothing as we normalize
+        // all paths into absolute paths in this step.
+    } else if let Some(path) = path.strip_prefix("../") {
+        let mut cd = std::env::current_dir().unwrap();
+        if cd.is_file() {
+            cd.pop();
+        }
+        cd.pop();
+        normalized_path = cd
+            .to_str()
+            .ok_or(LuaError::runtime("Bad path! Check for unicode."))?
+            .to_owned();
+        normalized_path.push_str(path);
+    } else {
+        normalized_path = std::env::current_dir()
+            .unwrap()
+            .to_str()
+            .ok_or(LuaError::runtime("Bad path! Check for unicode."))?
+            .to_owned();
+        if let Some(path) = path.strip_prefix("./") {
+            normalized_path.push_str(path);
+        } else {
+            normalized_path.push_str(&path);
+        }
+    }
+
+    // Separate normalized path
+    let mut prev: char = 0x0 as char;
+    for c in chars {
+        if c == '/' && prev != '\\' {
+            buffer.push(buf_cur);
+            buf_cur = String::new();
+        } else if c != '\\' || prev == '\\' {
+            buf_cur.push(c);
+        }
+        prev = c;
+    }
+
+    Ok(buffer)
 }
