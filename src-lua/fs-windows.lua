@@ -17,6 +17,7 @@ fs.Path = {}
 ---@return string[] split_path An array of path segments.
 ---@param path string The raw path to split up.
 function fs.Path.split_path(path)
+    return {}
 end
 
 ---@return Path new_path The newly created path from given string.
