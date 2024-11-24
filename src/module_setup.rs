@@ -8,7 +8,7 @@ pub const TSUKI_DBG_BINDINGS: &str = include_str!("../src-lua/tsuki-dbg.lua");
 pub const FS_BINDINGS: &str = include_str!("../src-lua/fs-unix.lua");
 #[cfg(windows)]
 pub const FS_BINDINGS: &str = include_str!("../src-lua/fs-windows.lua");
-pub const SYS_BINDINGS: &str = include_str!("../src-lua/sys.lua");
+pub const OS_BINDINGS: &str = include_str!("../src-lua/os.lua");
 
 use std::{
     cell::LazyCell,
@@ -21,6 +21,7 @@ thread_local! {
         let mut dir: PathBuf = dirs::home_dir().unwrap();
         dir.push(".tsuki");
         dir.push("modules");
+        dir.push("tsuki");
         dir.leak()
     });
 }
@@ -36,14 +37,15 @@ pub fn get_module_dir() -> PathBuf {
 }
 
 pub fn populate_modules() -> std::io::Result<()> {
-    let modules_dir: PathBuf = get_module_dir();
+    let modules_dir: PathBuf = get_module_dir().join("tsuki");
+    std::fs::create_dir_all(&modules_dir)?;
     let tsuki_dbg_path: PathBuf = modules_dir.join("tsuki-dbg.lua");
     let fs_path: PathBuf = modules_dir.join("fs.lua");
-    let sys_path: PathBuf = modules_dir.join("sys.lua");
+    let sys_path: PathBuf = modules_dir.join("os.lua");
 
     std::fs::write(&tsuki_dbg_path, TSUKI_DBG_BINDINGS)?;
     std::fs::write(&fs_path, FS_BINDINGS)?;
-    std::fs::write(&sys_path, SYS_BINDINGS)?;
+    std::fs::write(&sys_path, OS_BINDINGS)?;
 
     Ok(())
 }
