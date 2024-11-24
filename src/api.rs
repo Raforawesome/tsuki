@@ -7,4 +7,5 @@ pub use fs_unix as fs;
 #[cfg(windows)]
 pub use fs_windows as fs;
 
+pub mod os;
 pub mod tsuki_dbg;

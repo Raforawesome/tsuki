@@ -1,6 +1,6 @@
 //! A Lua framework akin to Node.js, but for Lua.
 //! Features provided are:
-//! - [ ] fs
+//! - [X] fs
 //! - [ ] http
 //! - [ ] os
 //! - [ ] window
@@ -36,9 +36,9 @@ fn main() -> LuaResult<()> {
     );
 
     let lua = Lua::new();
-    lua.globals()
-        .set("TSUKI_DBG_INTERNAL", tsuki_dbg_module(&lua)?)?;
-    lua.globals().set("FS_INTERNAL", fs_module(&lua)?)?;
+    let globals = lua.globals();
+    globals.set("TSUKI_DBG_INTERNAL", tsuki_dbg_module(&lua)?)?;
+    globals.set("FS_INTERNAL", fs_module(&lua)?)?;
     lua.load(&lua_file).exec()?;
 
     Ok(())

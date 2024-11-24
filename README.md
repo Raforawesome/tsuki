@@ -20,7 +20,7 @@ experience for these use cases.
 ## How does it work?
 Tsuki's CLI is made in Rust and uses calls to Rust code for most
 of its internal functions. When called on a file, it first creates its module
-files if they don't already exist. It then reads in the source of the file
+files if they don't exist. It then reads in the source of the file
 it was called on, creates a new Lua environment with Tsuki's internal functions
 loaded in, and then executes the Lua file with an updated `package.path` to
 include Tsuki's Lua libraries (which also include luals annotations).
