@@ -4,7 +4,7 @@
 use mlua::prelude::*;
 
 /// The function which creates the Lua module table.
-pub fn sys_module(lua: &Lua) -> LuaResult<LuaTable> {
+pub fn os_module(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("GET_OS_NAME", lua.create_function(os_name)?)?;
     exports.set("GET_ARCH_NAME", lua.create_function(arch_name)?)?;
