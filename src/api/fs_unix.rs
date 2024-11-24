@@ -27,6 +27,7 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
         // Case: Absolute path provided
         // current behaviour is to do nothing as we normalize
         // all paths into absolute paths in this step.
+        normalized_path = path;
     } else if let Some(path) = path.strip_prefix("../") {
         let mut cd = std::env::current_dir().unwrap();
         if cd.is_file() {
@@ -37,6 +38,7 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
             .to_str()
             .ok_or(LuaError::runtime("Bad path! Check for unicode."))?
             .to_owned();
+        normalized_path.push('/');
         normalized_path.push_str(path);
     } else {
         normalized_path = std::env::current_dir()
@@ -44,6 +46,7 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
             .to_str()
             .ok_or(LuaError::runtime("Bad path! Check for unicode."))?
             .to_owned();
+        normalized_path.push('/');
         if let Some(path) = path.strip_prefix("./") {
             normalized_path.push_str(path);
         } else {
@@ -52,8 +55,8 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
     }
 
     // Separate normalized path
-    let mut prev: char = 0x0 as char;
-    for c in path.chars().skip(1) {
+    let mut prev: char = 0 as char;
+    for c in normalized_path.chars().skip(1) {
         if c == '/' && prev != '\\' {
             buffer.push(buf_cur);
             buf_cur = String::new();
@@ -62,6 +65,7 @@ pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
         }
         prev = c;
     }
+    buffer.push(buf_cur);
 
     Ok(buffer)
 }
