@@ -6,8 +6,7 @@ fs.File = {}
 
 
 ---@class Path
----@field private relative boolean
----@field private stack string[]
+---@field private segments string[]
 ---# tsuki.fs.Path
 ---A class to represent file paths and allow
 ---ergonomic path traversal.
@@ -22,8 +21,7 @@ fs.Path = {}
 ---```
 function fs.Path.new(from)
     local new_path = setmetatable({
-        relative = false, -- set class defaults
-        stack = FS_INTERNAL.split_path(from)
+        segments = FS_INTERNAL.split_path(from)
     }, {
         __index = fs.Path,          -- Inherit methods from Path
         __newindex = function() end -- Disable adding new behaviour
@@ -39,7 +37,19 @@ end
 ---```
 function fs.Path:exists()
     -- return FS_INTERNAL.raw_path_exists(self.raw)
-    return FS_INTERNAL.raw_path_exists(table.concat(self.stack, "/"))
+    return FS_INTERNAL.raw_path_exists("/" .. table.concat(self.segments, "/"))
+end
+
+---@return string[] segments A table containing the segments of this path.
+---Example:
+---```lua
+---local path = Path.new("/home/arch/luafile")
+---for _, v in pairs(path:get_segments()) do
+---    print(v)  -- Should print (in order):
+---end           -- "home", "arch", "luafile"
+---```
+function fs.Path:get_segments()
+    return self.segments
 end
 
 return fs
