@@ -2,12 +2,23 @@
 //! machine the code is being run on.
 
 use mlua::prelude::*;
+use std::ffi::{OsStr, OsString};
+use std::{fs::File, path::PathBuf};
+
+fn pathbuf_from_segments(segments: &[String]) -> PathBuf {
+    let mut path: PathBuf = PathBuf::new();
+    for seg in segments {
+        path.push(seg)
+    }
+    path
+}
 
 /// The function which creates the Lua module table.
 pub fn fs_module(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("raw_path_exists", lua.create_function(raw_path_exists)?)?;
     exports.set("split_path", lua.create_function(split_path)?)?;
+    exports.set("file_data", lua.create_function(file_metadata)?)?;
     Ok(exports)
 }
 
@@ -16,6 +27,16 @@ pub fn raw_path_exists(_: &Lua, path: String) -> LuaResult<bool> {
     Ok(std::path::PathBuf::from(path).exists())
 }
 
+pub type FileMetadata<'a> = (OsString, bool);
+/// Lua API function to return metadata on a file given a [&Vec<String>] path.
+pub fn file_metadata(_: &Lua, segments: Vec<String>) -> LuaResult<FileMetadata> {
+    let path: PathBuf = pathbuf_from_segments(&segments);
+    // let file: File = File::open(&path)?;
+    // let md = file.metadata()?;
+    Ok((path.file_name().unwrap().to_owned(), path.is_dir()))
+}
+
+/// Lua API function to split a [String] path into segments (seperated by '/').
 pub fn split_path(_: &Lua, path: String) -> LuaResult<Vec<String>> {
     let mut buffer: Vec<String> = vec![];
     let mut buf_cur: String = String::new();
