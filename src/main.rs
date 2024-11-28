@@ -40,7 +40,11 @@ fn main() -> LuaResult<()> {
     globals.set("TSUKI_DBG_INTERNAL", tsuki_dbg_module(&lua)?)?;
     globals.set("FS_INTERNAL", fs_module(&lua)?)?;
     globals.set("OS_INTERNAL", os_module(&lua)?)?;
-    lua.load(&lua_file).exec()?;
+    let res = lua.load(&lua_file).exec();
+    if res.is_err() {
+        let err = res.unwrap_err();
+        println!("{}", err)
+    }
 
     Ok(())
 }
