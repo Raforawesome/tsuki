@@ -1,9 +1,5 @@
 local fs = {}
 
----@class File
----@field name string
-fs.File = {}
-
 ---@class Path
 ---@field private segments string[]
 ---@field private segments_readonly_ string[]
@@ -20,15 +16,9 @@ fs.Path = {}
 ---local home_path = Path.new("/home/arch/projects/tsuki")
 ---```
 function fs.Path.new(from)
-    local split = FS_INTERNAL.split_path(from)
     local new_path = setmetatable({
-        segments = split,
-        segments_readonly_ = setmetatable({}, {
-            __index = split,
-            __newindex = function()
-                error("Attempt to modify read-only `Path.segments`")
-            end
-        })
+        -- set all default constructor properties here
+        segments = FS_INTERNAL.split_path(from),
     }, {
         __index = fs.Path,          -- Inherit methods from Path
         __newindex = function() end -- Disable adding new behaviour
@@ -43,7 +33,6 @@ end
 ---print(path:exists())
 ---```
 function fs.Path:exists()
-    -- return FS_INTERNAL.raw_path_exists(self.raw)
     return FS_INTERNAL.raw_path_exists("/" .. table.concat(self.segments, "/"))
 end
 
@@ -56,7 +45,35 @@ end
 ---end           -- "home", "arch", "luafile"
 ---```
 function fs.Path:get_segments()
-    return self.segments_readonly_
+    return self.segments
+end
+
+---Special iterator function to traverse a `Path`
+---class as a string without needing to allocate a
+---new string.
+---
+---Does not allocate a new string, and instead feeds
+---the contents of its internal segments array as if
+---it were a continuous string.
+function fs.Path:iter()
+    local p1 = 1
+    local p2 = 0
+    local d = true
+    return function()
+        if d then
+            d = false
+            return '/'
+        end
+        p2 = p2 + 1
+        if p2 > #self.segments[p1] then
+            p1 = p1 + 1
+            p2 = 0
+            d = true
+        end
+        if p1 <= #self.segments and #self.segments[p1] > 0 then
+            return self.segments[p1]:sub(p2, p2)
+        end
+    end
 end
 
 return fs
